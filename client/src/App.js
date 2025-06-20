@@ -10,6 +10,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
       </Routes>
+      <h1 style={{ color: 'red' }}>Is this showing?</h1>
     </div>
   );
 }
