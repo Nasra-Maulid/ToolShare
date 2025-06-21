@@ -111,6 +111,42 @@ class Login(Resource):
         
         return make_response(jsonify(user.to_dict()), 200)
 
+class Bookings(Resource):
+    def get(self):
+        user_id = request.args.get('user_id')
+        tool_id = request.args.get('tool_id')
+        
+        query = Booking.query
+        
+        if user_id:
+            query = query.filter_by(user_id=user_id)
+        if tool_id:
+            query = query.filter_by(tool_id=tool_id)
+            
+        bookings = [booking.to_dict() for booking in query.all()]
+        return make_response(jsonify(bookings), 200)
+    
+    def post(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument('tool_id', type=int, required=True)
+        parser.add_argument('user_id', type=int, required=True)
+        parser.add_argument('start_date', type=str, required=True)
+        parser.add_argument('end_date', type=str, required=True)
+        
+        args = parser.parse_args()
+        
+        new_booking = Booking(
+            tool_id=args['tool_id'],
+            user_id=args['user_id'],
+            start_date=args['start_date'],
+            end_date=args['end_date']
+        )
+        
+        db.session.add(new_booking)
+        db.session.commit()
+        
+        return make_response(jsonify(new_booking.to_dict()), 201)
+
 # Root route
 @app.route('/')
 def home():
@@ -121,6 +157,8 @@ api.add_resource(Tools, '/tools')
 api.add_resource(ToolById, '/tools/<int:id>')
 api.add_resource(Signup, '/signup')
 api.add_resource(Login, '/login')
+api.add_resource(Bookings, '/bookings')
+
 
 # Run app
 if __name__ == '__main__':
