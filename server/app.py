@@ -1,7 +1,8 @@
 from flask import Flask, jsonify, make_response, request
 from flask_restful import Resource, reqparse
+from flask_bcrypt import Bcrypt
 from config import app, db, api
-from models import User, Tool, Review, Booking
+from models import User, Tool, Review, Booking, bcrypt
 
 # Helper function for error handling
 def error_response(message, status_code):
@@ -74,6 +75,42 @@ class ToolById(Resource):
         db.session.commit()
         return make_response(jsonify({"message": "Tool deleted"}), 200)
 
+# Auth Resources
+class Signup(Resource):
+    def post(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument('username', type=str, required=True)
+        parser.add_argument('email', type=str, required=True)
+        parser.add_argument('password', type=str, required=True)
+        
+        args = parser.parse_args()
+        
+        new_user = User(
+            username=args['username'],
+            email=args['email'],
+            password=args['password']  # Assumes hashing happens in the User model
+        )
+        
+        db.session.add(new_user)
+        db.session.commit()
+        
+        return make_response(jsonify(new_user.to_dict()), 201)
+
+class Login(Resource):
+    def post(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument('username', type=str, required=True)
+        parser.add_argument('password', type=str, required=True)
+        
+        args = parser.parse_args()
+        
+        user = User.query.filter_by(username=args['username']).first()
+        
+        if not user or not user.authenticate(args['password']):
+            return error_response("Invalid credentials", 401)
+        
+        return make_response(jsonify(user.to_dict()), 200)
+
 # Root route
 @app.route('/')
 def home():
@@ -82,6 +119,8 @@ def home():
 # Register resources
 api.add_resource(Tools, '/tools')
 api.add_resource(ToolById, '/tools/<int:id>')
+api.add_resource(Signup, '/signup')
+api.add_resource(Login, '/login')
 
 # Run app
 if __name__ == '__main__':
