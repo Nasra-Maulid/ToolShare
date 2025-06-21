@@ -1,5 +1,8 @@
+from flask_bcrypt import Bcrypt
 from config import db
 from sqlalchemy_serializer import SerializerMixin
+
+bcrypt = Bcrypt()  # 👈 Instantiate Bcrypt
 
 class User(db.Model, SerializerMixin):
     __tablename__ = 'users'
@@ -7,7 +10,7 @@ class User(db.Model, SerializerMixin):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String, unique=True, nullable=False)
     email = db.Column(db.String, unique=True, nullable=False)
-    password_hash = db.Column(db.String)
+    password_hash = db.Column(db.String, nullable=False)
     is_admin = db.Column(db.Boolean, default=False)
     
     # Relationships
@@ -15,7 +18,22 @@ class User(db.Model, SerializerMixin):
     reviews = db.relationship('Review', backref='user')
     bookings = db.relationship('Booking', backref='user')
     
+    # Prevent exposing password hash
     serialize_rules = ('-password_hash', '-tools.owner', '-reviews.user', '-bookings.user')
+
+    # Password setter (write-only)
+    @property
+    def password(self):
+        raise AttributeError('Password is not readable')
+
+    @password.setter
+    def password(self, password):
+        self.password_hash = bcrypt.generate_password_hash(password).decode('utf-8')
+
+    # Authentication method
+    def authenticate(self, password):
+        return bcrypt.check_password_hash(self.password_hash, password)
+
 
 class Tool(db.Model, SerializerMixin):
     __tablename__ = 'tools'
@@ -27,14 +45,13 @@ class Tool(db.Model, SerializerMixin):
     image_url = db.Column(db.String)
     available = db.Column(db.Boolean, default=True)
     
-    # Foreign keys
     owner_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-    
-    # Relationships
+
     reviews = db.relationship('Review', backref='tool')
     bookings = db.relationship('Booking', backref='tool')
     
     serialize_rules = ('-owner.tools', '-reviews.tool', '-bookings.tool')
+
 
 class Review(db.Model, SerializerMixin):
     __tablename__ = 'reviews'
@@ -42,12 +59,12 @@ class Review(db.Model, SerializerMixin):
     id = db.Column(db.Integer, primary_key=True)
     rating = db.Column(db.Integer, nullable=False)
     comment = db.Column(db.String)
-    
-    # Foreign keys
+
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     tool_id = db.Column(db.Integer, db.ForeignKey('tools.id'))
     
     serialize_rules = ('-user.reviews', '-tool.reviews')
+
 
 class Booking(db.Model, SerializerMixin):
     __tablename__ = 'bookings'
@@ -56,8 +73,7 @@ class Booking(db.Model, SerializerMixin):
     start_date = db.Column(db.DateTime, nullable=False)
     end_date = db.Column(db.DateTime, nullable=False)
     status = db.Column(db.String, default='pending')
-    
-    # Foreign keys
+
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     tool_id = db.Column(db.Integer, db.ForeignKey('tools.id'))
     
