@@ -147,6 +147,45 @@ class Bookings(Resource):
         
         return make_response(jsonify(new_booking.to_dict()), 201)
 
+class Reviews(Resource):
+    def get(self):
+        tool_id = request.args.get('tool_id')
+        user_id = request.args.get('user_id')
+        
+        query = Review.query
+        
+        if tool_id:
+            query = query.filter_by(tool_id=tool_id)
+        if user_id:
+            query = query.filter_by(user_id=user_id)
+            
+        reviews = [review.to_dict() for review in query.all()]
+        return make_response(jsonify(reviews), 200)
+    
+    def post(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument('tool_id', type=int, required=True)
+        parser.add_argument('user_id', type=int, required=True)
+        parser.add_argument('rating', type=int, required=True)
+        parser.add_argument('comment', type=str)
+        
+        args = parser.parse_args()
+        
+        if args['rating'] < 1 or args['rating'] > 5:
+            return error_response("Rating must be between 1-5", 400)
+        
+        new_review = Review(
+            tool_id=args['tool_id'],
+            user_id=args['user_id'],
+            rating=args['rating'],
+            comment=args['comment']
+        )
+        
+        db.session.add(new_review)
+        db.session.commit()
+        
+        return make_response(jsonify(new_review.to_dict()), 201)
+
 # Root route
 @app.route('/')
 def home():
@@ -158,7 +197,7 @@ api.add_resource(ToolById, '/tools/<int:id>')
 api.add_resource(Signup, '/signup')
 api.add_resource(Login, '/login')
 api.add_resource(Bookings, '/bookings')
-
+api.add_resource(Reviews, '/reviews')
 
 # Run app
 if __name__ == '__main__':
