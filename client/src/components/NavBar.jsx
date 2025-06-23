@@ -8,7 +8,12 @@ function NavBar() {
             <Link to="/">Home</Link>
             <Link to="/tools">Browse Tools</Link>
             {user ? (
-                <Link to="/dashboard">Dashboard</Link>
+                <>
+                    <Link to="/dashboard">Dashboard</Link>
+                    {user?.is_admin && (
+                        <Link to="/admin">Admin</Link>
+                    )}
+                </>
             ) : (
                 <Link to="/login">Login</Link>
             )}
