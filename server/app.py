@@ -199,6 +199,32 @@ class Reviews(Resource):
         
         return make_response(jsonify(new_review.to_dict()), 201)
 
+class AdminTools(Resource):
+    def get(self):
+        # Verify admin
+        user_id = request.args.get('user_id')
+        user = User.query.get(user_id)
+        if not user or not user.is_admin:
+            return error_response("Unauthorized", 403)
+        
+        tools = Tool.query.all()
+        return make_response(jsonify([tool.to_dict() for tool in tools]), 200)
+    
+    def delete(self, id):
+        # Verify admin
+        user_id = request.args.get('user_id')
+        user = User.query.get(user_id)
+        if not user or not user.is_admin:
+            return error_response("Unauthorized", 403)
+        
+        tool = Tool.query.get(id)
+        if not tool:
+            return error_response("Tool not found", 404)
+        
+        db.session.delete(tool)
+        db.session.commit()
+        return make_response(jsonify({"message": "Tool deleted"}), 200)
+
 # Root route
 @app.route('/')
 def home():
@@ -211,7 +237,7 @@ api.add_resource(Signup, '/signup')
 api.add_resource(Login, '/login')
 api.add_resource(Bookings, '/bookings')
 api.add_resource(Reviews, '/reviews')
-
+api.add_resource(AdminTools, '/admin/tools', '/admin/tools/<int:id>')
 # Run app
 if __name__ == '__main__':
     app.run(port=5555, debug=True)
