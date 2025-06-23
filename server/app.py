@@ -36,7 +36,20 @@ class Tools(Resource):
         db.session.commit()
         
         return make_response(jsonify(new_tool.to_dict()), 201)
-
+    # In Tools resource (app.py)
+def get(self):
+    search = request.args.get('search')
+    max_price = request.args.get('max_price')
+    
+    query = Tool.query
+    
+    if search:
+        query = query.filter(Tool.name.ilike(f'%{search}%'))
+    if max_price:
+        query = query.filter(Tool.daily_rate <= float(max_price))
+    
+    tools = [tool.to_dict() for tool in query.all()]
+    return make_response(jsonify(tools), 200)
 # Tool by ID Resource
 class ToolById(Resource):
     def get(self, id):
