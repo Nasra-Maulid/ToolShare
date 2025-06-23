@@ -1,21 +1,35 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../api';
+import SearchTools from './SearchTools'; // Assuming SearchTools is defined in this path
 
 const ToolList = () => {
     const [tools, setTools] = useState([]);
 
+    // Add at top of component
+    const [searchParams, setSearchParams] = useState({
+        search: '',
+        max_price: ''
+    });
+
+    // Replace tool fetch with:
     useEffect(() => {
         const fetchTools = async () => {
-            const toolsData = await api.get('/tools').then(res => res.data);
+            const params = new URLSearchParams(searchParams);
+            const toolsData = await api.get(`/tools?${params.toString()}`)
+                .then(res => res.data);
             setTools(toolsData);
         };
         fetchTools();
-    }, []);
+    }, [searchParams]);
 
     return (
         <div>
             <h1>Available Tools</h1>
+
+            {/* Add above tool grid */}
+            <SearchTools setSearchParams={setSearchParams} />
+
             <div className="tool-grid">
                 {tools.map(tool => (
                     <div key={tool.id} className="tool-card">
