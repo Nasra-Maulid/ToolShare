@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../api';
-import SearchTools from './SearchTools'; // Assuming SearchTools is defined in this path
+import SearchTools from '../components/SearchTools'; // Assuming SearchTools is defined in this path
 
 const ToolList = () => {
     const [tools, setTools] = useState([]);
