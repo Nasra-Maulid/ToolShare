@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: toolshare-frontend
+    runtime: node
+    buildCommand: "npm install && npm run build"
+    startCommand: "serve -s build"
+    envVars:
+      - key: REACT_APP_API_URL
+        value: https://toolshare-backend.onrender.com
