@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: toolshare-backend
+    runtime: python
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "gunicorn app:app"
+    envVars:
+      - key: DATABASE_URL
+        value: postgres://toolshare_db_user:password@localhost:5432/toolshare_db
+      - key: PYTHON_VERSION
+        value: 3.9.13
