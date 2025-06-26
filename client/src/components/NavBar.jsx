@@ -6,7 +6,7 @@ function NavBar() {
     return (
         <nav>
             <Link to="/">Home</Link>
-            <Link to="/tools">Browse Tools</Link>
+            <Link to="/tools">Browse</Link>
             {user ? (
                 <>
                     <Link to="/dashboard">Dashboard</Link>
