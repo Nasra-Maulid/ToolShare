@@ -1,0 +1,21 @@
+/* Tool Card Theme */
+.tool-card {
+  --card-bg: var(--lighter);
+  --card-shadow: var(--shadow-sm);
+  --card-hover-shadow: var(--shadow-lg);
+  --card-radius: var(--radius-md);
+}
+
+/* Navbar Theme */
+.navbar {
+  --nav-bg: var(--lighter);
+  --nav-shadow: var(--shadow-sm);
+  --nav-height: 70px;
+}
+
+/* Hero Section Theme */
+.hero {
+  --hero-bg: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7));
+  --hero-text: var(--lighter);
+  --hero-padding: 6rem 0;
+}

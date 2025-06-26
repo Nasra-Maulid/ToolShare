@@ -1,0 +1,76 @@
+.home-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.featured-tools {
+  padding: var(--space-xl) 0;
+  background-color: white;
+}
+
+.section-subtitle {
+  color: var(--gray);
+  margin-bottom: var(--space-xl);
+  text-align: center;
+}
+
+.tools-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: var(--space-xl);
+  margin-top: var(--space-xl);
+}
+
+.how-it-works {
+  padding: var(--space-xl) 0;
+  background-color: var(--gray-light);
+}
+
+.steps-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--space-xl);
+  margin-top: var(--space-xl);
+}
+
+.step {
+  text-align: center;
+  padding: var(--space-md);
+  background-color: white;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+}
+
+.step-number {
+  width: 40px;
+  height: 40px;
+  background-color: var(--primary);
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  margin: 0 auto var(--space-md);
+}
+
+.step h3 {
+  margin-bottom: var(--space-sm);
+  color: var(--dark);
+}
+
+.cta-section {
+  padding: var(--space-xl) 0;
+  text-align: center;
+  background-color: var(--primary);
+  color: white;
+}
+
+.cta-section h2 {
+  margin-bottom: var(--space-md);
+}
+
+.btn-lg {
+  padding: var(--space-md) var(--space-xl);
+  font-size: 1.1rem;
+}

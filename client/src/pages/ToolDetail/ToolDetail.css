@@ -1,0 +1,148 @@
+.tool-detail-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-xl);
+  padding: var(--space-xl);
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.tool-images {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.main-image {
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-md);
+}
+
+.main-image img {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1/1;
+  object-fit: cover;
+}
+
+.tool-info {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.tool-info h1 {
+  font-size: 2rem;
+  color: var(--dark);
+}
+
+.price {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--primary);
+}
+
+.price span {
+  font-size: 1rem;
+  font-weight: 400;
+  color: var(--gray);
+}
+
+.tool-meta {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-md);
+  margin: var(--space-md) 0;
+}
+
+.meta-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.meta-label {
+  font-size: 0.875rem;
+  color: var(--gray);
+}
+
+.meta-value {
+  font-weight: 500;
+}
+
+.tool-description {
+  line-height: 1.6;
+  color: var(--darker);
+}
+
+.booking-section {
+  background-color: var(--gray-light);
+  padding: var(--space-md);
+  border-radius: var(--radius-md);
+  margin-top: var(--space-md);
+}
+
+.booking-section h3 {
+  margin-bottom: var(--space-md);
+}
+
+.date-picker {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-md);
+  margin-bottom: var(--space-md);
+}
+
+.date-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.date-group label {
+  font-size: 0.875rem;
+  margin-bottom: var(--space-xs);
+  color: var(--gray);
+}
+
+.date-group input {
+  padding: var(--space-sm);
+  border: 1px solid var(--gray);
+  border-radius: var(--radius-sm);
+}
+
+.tool-reviews {
+  grid-column: 1 / -1;
+  margin-top: var(--space-xl);
+}
+
+.review-card {
+  background-color: white;
+  border-radius: var(--radius-md);
+  padding: var(--space-md);
+  margin-bottom: var(--space-md);
+  box-shadow: var(--shadow-sm);
+}
+
+.review-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: var(--space-sm);
+}
+
+.review-author {
+  font-weight: 500;
+}
+
+.review-rating {
+  color: #ffc107;
+}
+
+.review-text {
+  margin-bottom: var(--space-sm);
+  color: var(--darker);
+}
+
+.review-date {
+  font-size: 0.75rem;
+  color: var(--gray);
+}
