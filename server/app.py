@@ -4,6 +4,7 @@ from flask_restful import Resource, reqparse
 from flask_cors import CORS
 from config import app, db, api
 from models import User, Tool, Review, Booking, bcrypt
+import re
 
 # Database configuration
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///app.db')
@@ -58,13 +59,23 @@ class Tools(Resource):
 # Tool by ID Resource
 class ToolById(Resource):
     def get(self, id):
-        tool = Tool.query.get(id)
+        tool = db.session.get(Tool, id)  # Using get() instead of query.get()
         if not tool:
             return error_response("Tool not found", 404)
-        return make_response(jsonify(tool.to_dict()), 200)
+        
+        tool_data = tool.to_dict()
+        
+        # Add additional data
+        tool_data['reviews_count'] = len(tool.reviews)
+        tool_data['average_rating'] = (
+            sum(r.rating for r in tool.reviews) / len(tool.reviews) 
+            if tool.reviews else 0
+        )
+        
+        return make_response(jsonify(tool_data), 200)
 
     def patch(self, id):
-        tool = Tool.query.get(id)
+        tool = db.session.get(Tool, id)
         if not tool:
             return error_response("Tool not found", 404)
 
@@ -74,25 +85,33 @@ class ToolById(Resource):
         parser.add_argument('daily_rate', type=float)
         parser.add_argument('image_url', type=str)
         parser.add_argument('available', type=bool)
+        parser.add_argument('category', type=str)
 
         args = parser.parse_args()
 
-        for key, value in args.items():
-            if value is not None:
-                setattr(tool, key, value)
-
-        db.session.commit()
-        return make_response(jsonify(tool.to_dict()), 200)
+        try:
+            for key, value in args.items():
+                if value is not None:
+                    setattr(tool, key, value)
+            
+            db.session.commit()
+            return make_response(jsonify(tool.to_dict()), 200)
+        except Exception as e:
+            db.session.rollback()
+            return error_response(str(e), 400)
 
     def delete(self, id):
-        tool = Tool.query.get(id)
+        tool = db.session.get(Tool, id)
         if not tool:
             return error_response("Tool not found", 404)
 
-        db.session.delete(tool)
-        db.session.commit()
-        return make_response(jsonify({"message": "Tool deleted"}), 200)
-
+        try:
+            db.session.delete(tool)
+            db.session.commit()
+            return make_response(jsonify({"message": "Tool deleted"}), 200)
+        except Exception as e:
+            db.session.rollback()
+            return error_response(str(e), 500)
 # Signup Resource
 class Signup(Resource):
     def post(self):
@@ -237,6 +256,70 @@ class AdminTools(Resource):
 def home():
     return '<h1>ToolShare API</h1>'
 
+# @app.route('/tools/featured')
+# def featured_tools():
+#     tools = Tool.query.filter_by(featured=True).limit(4).all()
+#     return jsonify([tool.to_dict() for tool in tools])
+
+# @app.route('/tools')
+# def get_tools():
+#     search = request.args.get('search')
+#     category = request.args.get('category')
+#     min_price = request.args.get('min_price')
+#     max_price = request.args.get('max_price')
+    
+#     query = Tool.query
+    
+#     if search:
+#         query = query.filter(Tool.name.ilike(f'%{search}%'))
+#     if category:
+#         query = query.filter_by(category=category)
+#     if min_price:
+#         query = query.filter(Tool.daily_rate >= float(min_price))
+#     if max_price:
+#         query = query.filter(Tool.daily_rate <= float(max_price))
+        
+#     tools = query.all()
+#     return jsonify([tool.to_dict() for tool in tools])
+
+# @app.route('/signup', methods=['POST'])
+# def signup():
+#     data = request.get_json()
+    
+#     # Validate required fields
+#     required_fields = ['username', 'email', 'password']
+#     if not all(field in data for field in required_fields):
+#         return jsonify({'error': 'Missing required fields'}), 400
+    
+#     # Validate email format
+#     if not re.match(r"[^@]+@[^@]+\.[^@]+", data['email']):
+#         return jsonify({'error': 'Invalid email format'}), 400
+    
+#     # Check if user exists
+#     if User.query.filter_by(username=data['username']).first():
+#         return jsonify({'error': 'Username already exists'}), 400
+#     if User.query.filter_by(email=data['email']).first():
+#         return jsonify({'error': 'Email already registered'}), 400
+    
+#     try:
+#         new_user = User(
+#             username=data['username'],
+#             email=data['email'],
+#             password_hash=bcrypt.generate_password_hash(data['password']).decode('utf-8')
+#         )
+        
+#         db.session.add(new_user)
+#         db.session.commit()
+        
+#         return jsonify({
+#             'id': new_user.id,
+#             'username': new_user.username,
+#             'email': new_user.email
+#         }), 201
+#     except Exception as e:
+#         db.session.rollback()
+#         return jsonify({'error': 'Registration failed'}), 500
+    
 # Register resources
 api.add_resource(Tools, '/tools')
 api.add_resource(ToolById, '/tools/<int:id>')

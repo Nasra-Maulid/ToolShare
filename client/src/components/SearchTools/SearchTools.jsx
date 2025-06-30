@@ -1,5 +1,6 @@
 import { Formik, Form, Field } from 'formik';
 import api from '../api';
+import './SearchTools.css';
 
 const SearchTools = ({ setTools }) => {
     return (
@@ -16,10 +17,22 @@ const SearchTools = ({ setTools }) => {
             }}
         >
             <Form className="search-form">
-                <Field name="search" placeholder="Search tools..." />
-                <Field name="max_price" type="number" placeholder="Max price ($)" />
-                <button type="submit">Filter</button>
-            </Form>
+    <Field
+        name="search"
+        placeholder="Search tools..."
+        className="search-input"
+    />
+    <Field
+        name="max_price"
+        type="number"
+        placeholder="Max price ($)"
+        className="price-input"
+    />
+    <button type="submit" className="search-button">
+        Filter
+    </button>
+</Form>
+
         </Formik>
     );
 };

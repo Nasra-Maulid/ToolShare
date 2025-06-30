@@ -1,92 +1,106 @@
 import { useState, useEffect } from 'react';
-import ToolCard from '../../components/ToolCard/ToolCard';
-import HeroSection from '../../components/HeroSection/HeroSection';
-import './ToolList.css';
 import api from '../../api';
+import './ToolList.css';
 
 const ToolList = () => {
   const [tools, setTools] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [filters, setFilters] = useState({
     search: '',
-    category: 'all',
-    sort: 'newest'
+    category: '',
+    minPrice: '',
+    maxPrice: ''
   });
+  const [loading, setLoading] = useState(false);
+
+  const fetchTools = async () => {
+    setLoading(true);
+    try {
+      const params = {};
+      if (filters.search) params.search = filters.search;
+      if (filters.category) params.category = filters.category;
+      if (filters.minPrice) params.min_price = filters.minPrice;
+      if (filters.maxPrice) params.max_price = filters.maxPrice;
+
+      const response = await api.get('/tools', { params });
+      setTools(response.data);
+    } catch (error) {
+      console.error("Error fetching tools:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchTools = async () => {
-      try {
-        const response = await api.get('/tools');
-        setTools(response.data);
-        setLoading(false);
-      } catch (error) {
-        console.error("Error fetching tools:", error);
-        setLoading(false);
-      }
-    };
-    
     fetchTools();
-  }, []);
-
-  if (loading) {
-    return (
-      <div className="loading-container">
-        <div className="loading-spinner"></div>
-        <p>Loading tools...</p>
-      </div>
-    );
-  }
+  }, [filters]);
 
   return (
-    <>
-      <HeroSection />
-      
-      <main className="tool-list-container">
-        <div className="tool-filters">
-          <input
-            type="text"
-            placeholder="Search tools..."
-            className="search-input"
-            value={filters.search}
-            onChange={(e) => setFilters({...filters, search: e.target.value})}
+    <div className="tool-list-container">
+  <div className="tool-filters">
+    <input
+      type="text"
+      className="search-input"
+      placeholder="Search tools..."
+      value={filters.search}
+      onChange={(e) => setFilters({ ...filters, search: e.target.value })}
+    />
+
+    <select
+      className="filter-select"
+      value={filters.category}
+      onChange={(e) => setFilters({ ...filters, category: e.target.value })}
+    >
+      <option value="">All Categories</option>
+      <option value="garden">Garden Tools</option>
+      <option value="hand">Hand Tools</option>
+      <option value="power">Power Tools</option>
+    </select>
+
+    <div className="price-range">
+      <input
+        type="number"
+        className="search-input"
+        placeholder="Min price"
+        value={filters.minPrice}
+        onChange={(e) => setFilters({ ...filters, minPrice: e.target.value })}
+      />
+      <input
+        type="number"
+        className="search-input"
+        placeholder="Max price"
+        value={filters.maxPrice}
+        onChange={(e) => setFilters({ ...filters, maxPrice: e.target.value })}
+      />
+    </div>
+  </div>
+
+  {loading ? (
+    <div className="loading-container">
+      <div className="loading-spinner" />
+      <p>Loading tools...</p>
+    </div>
+  ) : tools.length > 0 ? (
+    <div className="tool-grid">
+      {tools.map((tool) => (
+        <div key={tool.id} className="tool-card">
+          <img
+            src={tool.image_url || '/images/tool-placeholder.jpg'}
+            alt={tool.name}
+            onError={(e) => {
+              e.target.src = '/images/tool-placeholder.jpg';
+            }}
           />
-          
-          <select
-            className="filter-select"
-            value={filters.category}
-            onChange={(e) => setFilters({...filters, category: e.target.value})}
-          >
-            <option value="all">All Categories</option>
-            <option value="power">Power Tools</option>
-            <option value="garden">Garden Tools</option>
-            <option value="hand">Hand Tools</option>
-          </select>
-          
-          <select
-            className="filter-select"
-            value={filters.sort}
-            onChange={(e) => setFilters({...filters, sort: e.target.value})}
-          >
-            <option value="newest">Newest First</option>
-            <option value="price-low">Price: Low to High</option>
-            <option value="price-high">Price: High to Low</option>
-          </select>
+          <h3>{tool.name}</h3>
+          <p>${tool.daily_rate}/day</p>
+          <p>{tool.category}</p>
         </div>
-        
-        <div className="tool-grid">
-          {tools.map(tool => (
-            <ToolCard key={tool.id} tool={tool} />
-          ))}
-        </div>
-        
-        <div className="pagination">
-          <button className="pagination-btn">Previous</button>
-          <span>Page 1 of 5</span>
-          <button className="pagination-btn">Next</button>
-        </div>
-      </main>
-    </>
+      ))}
+    </div>
+  ) : (
+    <p>No tools found matching your criteria.</p>
+  )}
+</div>
+
   );
 };
-
 export default ToolList;

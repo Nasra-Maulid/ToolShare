@@ -1,25 +1,26 @@
-.auth-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: calc(100vh - var(--nav-height));
-  padding: var(--space-xl);
+.signup-container {
   background-color: var(--gray-light);
+  min-height: calc(100vh - var(--nav-height));
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-xl);
 }
 
-.auth-card {
+.signup-container h2 {
+  text-align: center;
+  margin-bottom: var(--space-lg);
+  color: var(--dark);
+}
+
+form {
   background-color: var(--lighter);
+  padding: var(--space-xl);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-md);
-  padding: var(--space-xl);
   width: 100%;
   max-width: 450px;
-}
-
-.auth-card h2 {
-  text-align: center;
-  margin-bottom: var(--space-xl);
-  color: var(--dark);
 }
 
 .form-group {
@@ -30,6 +31,7 @@
   display: block;
   margin-bottom: var(--space-xs);
   font-weight: 500;
+  color: var(--dark);
 }
 
 .form-group input {
@@ -38,34 +40,36 @@
   border: 1px solid var(--gray);
   border-radius: var(--radius-sm);
   font-size: 1rem;
+  background-color: white;
 }
 
-.btn-block {
+button[type="submit"] {
   width: 100%;
   padding: var(--space-sm);
-  margin-top: var(--space-md);
-}
-
-.auth-footer {
-  text-align: center;
-  margin-top: var(--space-lg);
-  color: var(--gray);
-}
-
-.auth-footer a {
-  color: var(--primary);
-  font-weight: 500;
-}
-
-.alert {
-  padding: var(--space-sm);
+  background-color: var(--primary);
+  color: white;
+  font-weight: 600;
+  border: none;
   border-radius: var(--radius-sm);
-  margin-bottom: var(--space-md);
-  text-align: center;
+  cursor: pointer;
+  transition: background-color 0.3s;
 }
 
-.alert-error {
+button[type="submit"]:hover:not(:disabled) {
+  background-color: var(--primary-dark);
+}
+
+button[disabled] {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.error-message {
   background-color: #fee2e2;
   color: #b91c1c;
   border: 1px solid #fca5a5;
+  padding: var(--space-sm);
+  border-radius: var(--radius-sm);
+  text-align: center;
+  margin-bottom: var(--space-md);
 }

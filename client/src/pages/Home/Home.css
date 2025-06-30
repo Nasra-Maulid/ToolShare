@@ -2,6 +2,21 @@
   display: flex;
   flex-direction: column;
 }
+.features {
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 3rem;
+}
+
+.feature {
+  text-align: center;
+  max-width: 300px;
+}
+
+.feature-icon {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+}
 
 .featured-tools {
   padding: var(--space-xl) 0;
@@ -73,4 +88,86 @@
 .btn-lg {
   padding: var(--space-md) var(--space-xl);
   font-size: 1.1rem;
+}
+.section-title {
+  font-size: 2rem;
+  text-align: center;
+  margin-bottom: var(--space-xl);
+  color: var(--dark);
+  animation: fadeIn 1s ease-in-out;
+}
+
+.how-it-works {
+  background: var(--gray-light);
+  padding: var(--space-xl) 1rem;
+}
+
+.steps-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: var(--space-lg);
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.step {
+  background: #fff;
+  border-radius: var(--radius-md);
+  padding: var(--space-lg);
+  text-align: center;
+  box-shadow: var(--shadow-sm);
+  transform: translateY(30px);
+  opacity: 0;
+  animation: fadeInUp 0.8s forwards;
+}
+
+.step-number {
+  background-color: var(--primary);
+  color: #fff;
+  font-size: 1.2rem;
+  width: 40px;
+  height: 40px;
+  line-height: 40px;
+  margin: 0 auto var(--space-md);
+  border-radius: 50%;
+  font-weight: bold;
+  animation: popIn 0.5s ease-out;
+}
+
+.step h3 {
+  margin-bottom: var(--space-sm);
+  color: var(--dark);
+  font-size: 1.1rem;
+}
+
+.step p {
+  color: var(--gray);
+  font-size: 0.95rem;
+  line-height: 1.4;
+}
+
+/* Animations */
+@keyframes fadeInUp {
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes popIn {
+  0% {
+    transform: scale(0.7);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.fade-in-up {
+  animation-name: fadeInUp;
+  animation-duration: 0.8s;
+  animation-fill-mode: forwards;
+  animation-timing-function: ease-out;
 }
